@@ -10,6 +10,8 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const employees = [];
+
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
@@ -57,6 +59,15 @@ const questions = [
             message: "Office number:",
             when: (response) => response.role == "Manager",
         },
+        {
+            type: "list",
+            name: "continue",
+            message: "Add another employee?",
+            choices: [ 
+                "Yes", new inquirer.Separator(), 
+                "No", new inquirer.Separator(), 
+            ],
+        },
 ]
 
 init = () => {
@@ -69,8 +80,13 @@ init = () => {
     inquirer
         //.prompt uses the questions array to ask the user questions
         .prompt(questions)
-        .then((answer) => {
-            generateEmployee(answer);
+        .then((response) => {
+            generateEmployee(response);
+            if (response.continue == "Yes") {
+                init();
+            }else {
+                console.log("Team list completed!")
+            }
             })
 }
 
@@ -86,10 +102,10 @@ generateEmployee = (response) => {
         uniqueParameter = response.school;
         role = Intern;
     } if (response.role == "Engineer") {
-        uniqueParameter = response.gitHub;
+        uniqueParameter = response.github;
         role = Engineer;
     } if (response.role == "Manager") {
-        uniqueParameter = response.roomNumber;
+        uniqueParameter = response.officeNumber;
         role = Manager;
     }
     newEmployee = new role(
@@ -98,7 +114,8 @@ generateEmployee = (response) => {
         response.email,
         uniqueParameter,
     );
-    console.log(newEmployee);
+    employees.push(newEmployee)
+    console.log(employees);
 }
 
 init();
