@@ -12,9 +12,8 @@ const render = require("./lib/htmlRenderer");
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
-console.log("Hello! Let's get your team added to the company database.");
-console.log("Please fill out the following prompts:");
-inquirer.prompt([
+
+const questions = [
         {
             type: "input",
             name: "name",
@@ -48,8 +47,8 @@ inquirer.prompt([
         },
         {
             type: "input",
-            name: "gitHub",
-            message: "gitHub username:",
+            name: "github",
+            message: "github username:",
             when: (response) => response.role == "Engineer",
         },
         {
@@ -57,16 +56,53 @@ inquirer.prompt([
             name: "officeNumber",
             message: "Office number:",
             when: (response) => response.role == "Manager",
-        }
-    ])
-    .then ((answers) => {})
-    .catch((err) => {
-        console.log(err);
-    });
+        },
+]
+
+init = () => {
+    //intro
+    console.log("-----------------------");
+    console.log("Hello! Let's get your team added to the company database.");
+    console.log("Please fill out the following prompts:");
+    console.log("-----------------------");
+    //use the inquirer package
+    inquirer
+        //.prompt uses the questions array to ask the user questions
+        .prompt(questions)
+        .then((answer) => {
+            generateEmployee(answer);
+            })
+}
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
+
+generateEmployee = (response) => {
+    let newEmployee = "";
+    let uniqueParameter = "";
+    let role = "";
+    if (response.role == "Intern") {
+        uniqueParameter = response.school;
+        role = Intern;
+    } if (response.role == "Engineer") {
+        uniqueParameter = response.gitHub;
+        role = Engineer;
+    } if (response.role == "Manager") {
+        uniqueParameter = response.roomNumber;
+        role = Manager;
+    }
+    newEmployee = new role(
+        response.name,
+        response.id,
+        response.email,
+        uniqueParameter,
+    );
+    console.log(newEmployee);
+}
+
+init();
+
 
 // After you have your html, you're now ready to create an HTML file using the HTML
 // returned from the `render` function. Now write it to a file named `team.html` in the
