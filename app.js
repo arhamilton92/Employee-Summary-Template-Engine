@@ -18,7 +18,7 @@ const employees = [];
 const questions = [
         {
             type: "input",
-            name: "name",
+            name: "Employee First Name",
             message: "Employee Name:",
         },
         {
@@ -70,6 +70,8 @@ const questions = [
         },
 ]
 
+
+
 init = () => {
     //intro
     console.log("-----------------------");
@@ -86,6 +88,7 @@ init = () => {
                 init();
             }else {
                 console.log("Team list completed!")
+                finishPrompts();
                 fs.writeFile(outputPath, render(employees), function (err) {
                     if (err) {
                         return console.log(err);
@@ -93,6 +96,18 @@ init = () => {
                 })
             }
         })
+}
+
+function getEmployees(name, callback) {
+    let result = await con.query('your query', []);
+    console.log(result)
+    const user = new User(result[0]);
+    return user;
+}
+
+
+finishPrompts() {
+    inquirer.prompt
 }
 
 generateEmployee = (response) => {
